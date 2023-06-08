@@ -6,17 +6,16 @@ driver:
   options:
     D: true
     vv: true
-
 lint: |
   yamllint .
   ansible-lint
   flake8
 platforms:
-  - name: centos_8
-    image: centos:8
+  - name: ubuntu_bionic
+    image: ubuntu:bionic
     dockerfile: ../resources/Dockerfile.j2
     # pre_build_image: true
-    command: /usr/sbin/init
+    command: /sbin/init
     privileged: true
     capabilities:
       - SYS_ADMIN
@@ -27,7 +26,7 @@ platforms:
       - /sys/fs/cgroup:/sys/fs/cgroup
     env:
       ANSIBLE_USER: ansible
-      SUDO_GROUP: wheel
+      SUDO_GROUP: sudo
       DEPLOY_GROUP: deployer
       container: docker
 provisioner:
@@ -35,6 +34,8 @@ provisioner:
   options:
     vv: true
     D: true
+  ansible_args:
+    - '-vv'
   inventory:
     links:
       hosts: ../resources/inventory/hosts.yml
@@ -42,6 +43,7 @@ provisioner:
       host_vars: ../resources/inventory/host_vars/
   playbooks:
     converge: ../resources/playbooks/converge.yml
+    verify: ../resources/tests/verify.yml
 verifier:
   name: ansible
   playbooks:

@@ -6,17 +6,16 @@ driver:
   options:
     D: true
     vv: true
-
 lint: |
   yamllint .
   ansible-lint
   flake8
 platforms:
-  - name: centos_8
-    image: centos:8
-    dockerfile: ../resources/Dockerfile.j2
+  - name: debian_jessie
+    image: debian:jessie
+    dockerfile: ../resources/Dockerfile_jessie.j2
     # pre_build_image: true
-    command: /usr/sbin/init
+    command: /sbin/init
     privileged: true
     capabilities:
       - SYS_ADMIN
@@ -27,7 +26,7 @@ platforms:
       - /sys/fs/cgroup:/sys/fs/cgroup
     env:
       ANSIBLE_USER: ansible
-      SUDO_GROUP: wheel
+      SUDO_GROUP: sudo
       DEPLOY_GROUP: deployer
       container: docker
 provisioner:
